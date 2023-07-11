@@ -1,0 +1,21 @@
+<?php
+
+function fix_order_place_preprocess_page(&$variables){
+  $request = \Drupal::service('request_stack')->getCurrentRequest();
+  $requestUri = $request->getRequestUri();
+  $complete = (substr($requestUri, -9));
+  if ($complete == "/complete" && \Drupal::routeMatch()->getRouteName() == 'commerce_checkout.form'){
+    $order = \Drupal::routeMatch()->getParameter('commerce_order');
+    $order_state_label = $order->getState()->getLabel();
+    if($order_state_label !== 'Pendiente'){
+      $order_state = $order->getState();
+      $order_state_transitions = $order_state->getTransitions();
+      $order_state->applyTransition($order_state_transitions['place']);
+      $order->save();
+
+      $response = new Symfony\Component\HttpFoundation\RedirectResponse($requestUri);
+      $response->send();
+      return;
+    }
+  }
+}

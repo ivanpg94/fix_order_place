@@ -1,0 +1,6 @@
+name: 'Fix order place'
+type: module
+description: 'A module to fix order that stay as carts. With this module when order finish will make transition to place '
+package: 'ivan'
+version: VERSION
+core_version_requirement: ^8 || ^9
